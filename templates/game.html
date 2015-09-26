@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+{% block title %}Mawago{% endblock %}
+{% block js %}<script type="text/javascript" charset="utf-8">
+$(document).ready(function() {
+    game_id = {{ game_id|tojson }};
+    player_id = {{ player_id|tojson }};
+
+    can_play = false;
+
+    var socket = io.connect('http://' + document.domain + ':' + location.port);
+    socket.on('connect', function() {
+        // Make sure this session is valid; ask the server.
+        socket.emit('playing', {'game_id': game_id, 'player_id': player_id});
+    });
+
+    socket.on('verified', function() {
+        $('#game').show();
+    });
+
+    socket.on('update', function(state) {
+        board = state['board'];
+        can_play = state['can_play'];
+        for (var y = 0; y < 6; y++) {
+            for (var x = 0; x < 6; x++) {
+                var td = $('#b' + x + y);
+                var val = board[x][y];
+                if (val) {
+                    td.html('<div class="p' + val + '"></div>');
+                } else {
+                    td.empty();
+                }
+            }
+        }
+        $('form :input').prop('disabled', !can_play);
+    });
+
+    $('.board td').click(function (event) {
+        var x = event.target.id[1] | 0;
+        var y = event.target.id[2] | 0;
+        var quadrant = $('input[name="quadrant"]:checked').val();
+        var direction = $('input[name="direction"]:checked').val();
+        if (can_play && 0 <= x && x < 6
+                     && 0 <= y && y < 6
+                     && quadrant && direction
+                     && board && board[x][y] === null) {
+            socket.emit('move', {
+                'x': x,
+                'y': y,
+                'quadrant': quadrant,
+                'direction': direction,
+                'game_id': game_id,
+                'player_id': player_id
+            });
+        }
+    });
+});
+</script>
+<style type="text/css">
+.board {
+    border-collapse: collapse;
+}
+
+.board td {
+    background-color: #dd6677;
+    text-align: center;
+    padding: 0px;
+    border: 1px solid #cc5566;
+    width: 72px;
+    height: 72px;
+}
+
+.board td.alt {
+    background-color: #d06070;
+}
+
+.p1, .p2 {
+    margin: auto;
+    display: block;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+}
+
+.p1 {
+    background-color: #383838;
+    background-image: linear-gradient(27deg, #303030, #3f3f3f);
+    box-shadow: inset 10px -10px 10px 21px rgba(0,0,0,0.3),
+        -3px 5px 5px rgba(0,0,0,0.3);
+}
+
+.p2 {
+    background-color: #f8f8f8;
+    background-image: linear-gradient(27deg, #f0f0f0, #ffffff);
+    box-shadow: inset 10px -10px 10px 21px rgba(0,0,0,0.06),
+        -3px 5px 5px rgba(0,0,0,0.3);
+}
+</style>{% endblock %}
+{% block content %}
+<div id="game" style="display: none;">
+  <form method="POST" action="#">
+  <div>
+  <input type="radio" name="quadrant" value="tl" checked>Top-left</input><br/>
+  <input type="radio" name="quadrant" value="tr">Top-right</input><br/>
+  <input type="radio" name="quadrant" value="bl">Bottom-left</input><br/>
+  <input type="radio" name="quadrant" value="br">Bottom-right</input><br/>
+  </div>
+  <div>
+  <input type="radio" name="direction" value="cw" checked>Clockwise</input><br/>
+  <input type="radio" name="direction" value="ccw">Counter-clockwise</input><br/>
+  </div>
+  </form>
+  <div style="text-align:center;">
+  <table class="board"><tbody>
+  {% for y in range(6) -%}
+  <tr>
+      {%- for x in range(6) -%}
+      <td id="b{{x}}{{y}}"
+          {%- if (x // 3 + y // 3) % 2 %} class="alt"
+          {%- endif -%} >
+      </td>
+      {%- endfor %}
+  </tr>
+  {%- endfor %}
+  </tbody></table>
+  </div>
+</div>
+<div id="errors"></div>
+{% endblock %}

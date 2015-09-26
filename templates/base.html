@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>{% block title %}{% endblock %}</title>
+<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+<script src="http://localhost:8080/static/socket.io.js"></script>
+{% block js %}{% endblock %}
+</head>
+<body>
+<noscript>
+<style type="text/css">#content { display: none; }</style>
+To play Mawago, your browser must have JavaScript enabled.
+</noscript>
+<div id="content">{% block content %}{% endblock %}</div>
+</body>
+</html>

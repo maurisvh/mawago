@@ -1,0 +1,62 @@
+<html>
+<head>
+<style type="text/css">
+.board { border-collapse: collapse; }
+.board td {
+    background-color: #88ccff;
+    display: block;
+    text-align: center;
+    padding: 0px;
+    border: 1px solid #66aaee;
+    width: 72px;
+    height: 72px;
+}
+.board td.alt { background-color: #80c0f0; }
+.p1, .p2 {
+    margin: auto;
+    display: block;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+}
+.p1 {
+    background-color: #f8f8f8;
+    background-image: linear-gradient(27deg, #f0f0f0, #ffffff);
+    box-shadow: inset 10px -10px 10px 21px rgba(0,0,0,0.06), -3px 5px 5px rgba(0,0,0,0.3);
+}
+.p2 {
+    background-color: #383838;
+    background-image: linear-gradient(27deg, #303030, #3f3f3f);
+    box-shadow: inset 10px -10px 10px 21px rgba(0,0,0,0.3), -3px 5px 5px rgba(0,0,0,0.3);
+}
+</style>
+</head>
+<script>
+function turn() {
+    for (var x = 0; x < 3; x++) {
+        for (var y = 0; y < 3; y++) {
+            var b = document.getElementById('b' + x + y).firstChild;
+            if (!b) continue;
+            var ox = (2 - x) * 100 - 50;
+            var oy = (2 - y) * 100 - 50;
+            b.setAttribute('style',
+                  'transition-timing-function: linear;'
+                + 'transform-origin: ' + ox + '% ' + oy + '%; '
+                + 'transform:rotate(90deg); transition-duration:0.5s;');
+        }
+    }
+}
+</script>
+<button onclick="turn()">hello</button>
+
+<body>
+<table class="board"><tbody>
+<tr><td id="b00"><div class="p1"></div></td><td id="b10"><div class="p1"></div></td><td id="b20"></td><td id="b30" class="alt"></td><td id="b40" class="alt"></td><td id="b50" class="alt"></td></tr>
+<tr><td id="b01"><div class="p2"></div></td><td id="b11"></td><td id="b21"></td><td id="b31" class="alt"></td><td id="b41" class="alt"></td><td id="b51" class="alt"></td></tr>
+<tr><td id="b02"></td><td id="b12"></td><td id="b22"></td><td id="b32" class="alt"></td><td id="b42" class="alt"></td><td id="b52" class="alt"></td></tr>
+<tr><td id="b03" class="alt"></td><td id="b13" class="alt"></td><td id="b23" class="alt"></td><td id="b33"></td><td id="b43"></td><td id="b53"></td></tr>
+<tr><td id="b04" class="alt"></td><td id="b14" class="alt"></td><td id="b24" class="alt"></td><td id="b34"></td><td id="b44"></td><td id="b54"></td></tr>
+<tr><td id="b05" class="alt"></td><td id="b15" class="alt"></td><td id="b25" class="alt"></td><td id="b35"></td><td id="b45"></td><td id="b55"></td></tr>
+</tbody></table>
+</body>
+</html>

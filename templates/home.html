@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Mawago{% endblock %}
+{% block content %}
+<h1>Mawago</h1>
+<form method="POST" action="create">
+<div>Play as:
+<input type="radio" name="play_as" value="1" checked>Black (first move)</input>
+<input type="radio" name="play_as" value="2">White</input></div>
+<div><input value="Create new game" type="submit"></input></div>
+</form>
+{% endblock %}

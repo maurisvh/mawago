@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block js %}<script type="text/javascript">
+$(document).ready(function() {
+    var socket = io.connect('http://' + document.domain + ':' + location.port);
+    socket.on('connect', function() {
+        socket.emit('waiting', {'game_id': {{ game_id|tojson }} });
+    });
+    socket.on('joined', function(json) {
+        window.location.replace('/game/'
+            + json['game_id'] + '/' + json['player_id']);
+    });
+});
+</script>{% endblock %}
+{% block title %}Waiting for opponent{% endblock %}
+{% block content %}
+<p>A link to this game has been copied to your clipboard:</p>
+<p><tt>{{ url_for('route_join', game_id=game_id, _external=True) }}</tt></p>
+<p>You will be redirected when your opponent joins the game.</p>
+{% endblock %}
